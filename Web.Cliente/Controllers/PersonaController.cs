@@ -36,7 +36,12 @@ namespace Web.Cliente.Controllers
             //List<PersonaCLS> lista = JsonSerializer.Deserialize<List<PersonaCLS>>(cadena);
             //return lista;
             //
-            return await ClientHttp.GetAll<PersonaCLS>(_httpClientFactory, urlbase, "/api/Persona");
+
+            List<PersonaCLS> lista = await ClientHttp.GetAll<PersonaCLS>(_httpClientFactory, urlbase, "/api/Persona"); ;
+
+            lista.Where(p => p.fotocadena == "").ToList().ForEach(p => p.fotocadena = "/img/nofoto.jpg");
+
+            return lista;
         }
 
         //Metodo para listar personas con filtro
@@ -47,8 +52,19 @@ namespace Web.Cliente.Controllers
             //string cadena = await cliente.GetStringAsync("api/Persona/"+nombrecompleto);
             //List<PersonaCLS> lista = JsonSerializer.Deserialize<List<PersonaCLS>>(cadena);
             //return lista;
+            if (nombrecompleto != null)
+            {
+                List<PersonaCLS> lista = await ClientHttp.GetAll<PersonaCLS>(_httpClientFactory, urlbase, "/api/Persona/" + nombrecompleto);
 
-            return await ClientHttp.GetAll<PersonaCLS>(_httpClientFactory, urlbase, "/api/Persona/" + nombrecompleto);
+                lista.Where(p => p.fotocadena == "").ToList().ForEach(p => p.fotocadena = "/img/nofoto.jpg");
+
+                return lista;
+
+            }
+            else
+            {
+                return await listarPersonas();
+            }
         }
 
         //Metodo para recuperar una persona por su id
@@ -60,6 +76,67 @@ namespace Web.Cliente.Controllers
             //PersonaCLS persona = JsonSerializer.Deserialize<PersonaCLS>(cadena);
             //return persona;
             return await ClientHttp.Get<PersonaCLS>(_httpClientFactory, urlbase, "/api/Persona/recuperarPersona/" + id);
+        }
+
+        //Metodo para eliminar una persona por su id
+        public async Task<int> eliminarPersona(int id)
+        {
+            //var cliente = _httpClientFactory.CreateClient();
+            //cliente.BaseAddress = new Uri(urlbase);
+            //var response = await cliente.DeleteAsync("api/Persona/eliminarPersona/" + id);
+            //if(response.IsSuccessStatusCode)
+            //{
+            //    string cadena = await response.Content.ReadAsStringAsync();
+            //    return int.Parse(cadena);
+            //}
+            //return 0;
+            return await ClientHttp.Delete(_httpClientFactory, urlbase, "/api/Persona/" + id);
+        }
+
+        //Metodo para guardar una persona
+        public async Task<int> guardarPersona(PersonaCLS oPersonaCLS, IFormFile fotoenviar)
+        {
+            //var cliente = _httpClientFactory.CreateClient();
+            //cliente.BaseAddress = new Uri(urlbase);
+            //var response = await cliente.DeleteAsync("api/Persona/eliminarPersona/" + id);
+            //if(response.IsSuccessStatusCode)
+            //{
+            //    string cadena = await response.Content.ReadAsStringAsync();
+            //    return int.Parse(cadena);
+            //}
+            //return 0;
+            byte[] buffer = new byte[0];
+            string nombrefoto = "";
+
+            if (fotoenviar != null)
+            {
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    fotoenviar.CopyTo(ms);
+                    
+                    nombrefoto = fotoenviar.FileName;
+
+                    buffer = ms.ToArray();
+                }
+            }
+
+            oPersonaCLS.nombrearchivo = nombrefoto;
+            oPersonaCLS.archivo = buffer;
+
+            return await ClientHttp.Post(_httpClientFactory, urlbase, "/api/Persona/" , oPersonaCLS);
+        }
+
+        //Metodo para recuperar una persona sin usuario por su id
+        public async Task<List<PersonaCLS>> listarPersonaSinUsuario()
+        {
+            //var cliente = _httpClientFactory.CreateClient();
+            //cliente.BaseAddress = new Uri(urlbase);
+            //string cadena = await cliente.GetStringAsync("api/Persona/recuperarPersona/" + id);
+            //PersonaCLS persona = JsonSerializer.Deserialize<PersonaCLS>(cadena);
+            //return persona;
+            List<PersonaCLS> lista = await ClientHttp.GetAll<PersonaCLS>(_httpClientFactory, urlbase, "/api/Persona/listarPersonaSinUsuario");
+
+            return lista;
         }
     }
 }
