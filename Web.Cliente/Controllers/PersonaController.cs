@@ -10,12 +10,14 @@ namespace Web.Cliente.Controllers
         private string urlbase;
         private string cadena;
         private readonly IHttpClientFactory _httpClientFactory;
+        private string token;
 
         public PersonaController(IConfiguration configuration, IHttpClientFactory httpClientFactory)
         {
             urlbase = configuration["baseurl"];
             cadena = "hola te hace la cola";
             _httpClientFactory = httpClientFactory;
+            token = configuration["token"];
         }
 
 
@@ -37,7 +39,7 @@ namespace Web.Cliente.Controllers
             //return lista;
             //
 
-            List<PersonaCLS> lista = await ClientHttp.GetAll<PersonaCLS>(_httpClientFactory, urlbase, "/api/Persona"); ;
+            List<PersonaCLS> lista = await ClientHttp.GetAll<PersonaCLS>(_httpClientFactory, urlbase, "/api/Persona", token); ;
 
             lista.Where(p => p.fotocadena == "").ToList().ForEach(p => p.fotocadena = "/img/nofoto.jpg");
 
@@ -54,7 +56,7 @@ namespace Web.Cliente.Controllers
             //return lista;
             if (nombrecompleto != null)
             {
-                List<PersonaCLS> lista = await ClientHttp.GetAll<PersonaCLS>(_httpClientFactory, urlbase, "/api/Persona/" + nombrecompleto);
+                List<PersonaCLS> lista = await ClientHttp.GetAll<PersonaCLS>(_httpClientFactory, urlbase, "/api/Persona/" + nombrecompleto, token);
 
                 lista.Where(p => p.fotocadena == "").ToList().ForEach(p => p.fotocadena = "/img/nofoto.jpg");
 
@@ -75,7 +77,7 @@ namespace Web.Cliente.Controllers
             //string cadena = await cliente.GetStringAsync("api/Persona/recuperarPersona/" + id);
             //PersonaCLS persona = JsonSerializer.Deserialize<PersonaCLS>(cadena);
             //return persona;
-            return await ClientHttp.Get<PersonaCLS>(_httpClientFactory, urlbase, "/api/Persona/recuperarPersona/" + id);
+            return await ClientHttp.Get<PersonaCLS>(_httpClientFactory, urlbase, "/api/Persona/recuperarPersona/" + id, token);
         }
 
         //Metodo para eliminar una persona por su id
@@ -90,7 +92,7 @@ namespace Web.Cliente.Controllers
             //    return int.Parse(cadena);
             //}
             //return 0;
-            return await ClientHttp.Delete(_httpClientFactory, urlbase, "/api/Persona/" + id);
+            return await ClientHttp.Delete(_httpClientFactory, urlbase, "/api/Persona/" + id, token);
         }
 
         //Metodo para guardar una persona
@@ -123,7 +125,7 @@ namespace Web.Cliente.Controllers
             oPersonaCLS.nombrearchivo = nombrefoto;
             oPersonaCLS.archivo = buffer;
 
-            return await ClientHttp.Post(_httpClientFactory, urlbase, "/api/Persona/" , oPersonaCLS);
+            return await ClientHttp.Post(_httpClientFactory, urlbase, "/api/Persona/" , oPersonaCLS, token);
         }
 
         //Metodo para recuperar una persona sin usuario por su id
@@ -134,7 +136,7 @@ namespace Web.Cliente.Controllers
             //string cadena = await cliente.GetStringAsync("api/Persona/recuperarPersona/" + id);
             //PersonaCLS persona = JsonSerializer.Deserialize<PersonaCLS>(cadena);
             //return persona;
-            List<PersonaCLS> lista = await ClientHttp.GetAll<PersonaCLS>(_httpClientFactory, urlbase, "/api/Persona/listarPersonaSinUsuario");
+            List<PersonaCLS> lista = await ClientHttp.GetAll<PersonaCLS>(_httpClientFactory, urlbase, "/api/Persona/listarPersonaSinUsuario", token);
 
             return lista;
         }

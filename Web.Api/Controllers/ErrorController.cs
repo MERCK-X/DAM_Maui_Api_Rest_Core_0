@@ -7,5 +7,10 @@ namespace Web.Api.Controllers
     [ApiController]
     public class ErrorController : ControllerBase
     {
+        [HttpGet]
+        public string ErrorAPI()
+        {
+            return "YA VALIOO, NO TIENE PERMISO PARA ACCEDER A LA API JAJA";
+        }
     }
 }

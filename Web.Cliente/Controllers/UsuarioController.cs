@@ -10,11 +10,13 @@ namespace Web.Cliente.Controllers
     {
         private string urlbase;
         private readonly IHttpClientFactory _httpClientFactory;
+        private string token;
 
         public UsuarioController(IConfiguration configuration, IHttpClientFactory httpClientFactory)
         {
             urlbase = configuration["baseurl"];
             _httpClientFactory = httpClientFactory;
+            token = configuration["token"];
         }
 
         public IActionResult Index()
@@ -33,7 +35,7 @@ namespace Web.Cliente.Controllers
             //return lista;
             //
 
-            List<UsuarioCLS> lista = await ClientHttp.GetAll<UsuarioCLS>(_httpClientFactory, urlbase, "/api/Usuario"); ;
+            List<UsuarioCLS> lista = await ClientHttp.GetAll<UsuarioCLS>(_httpClientFactory, urlbase, "/api/Usuario", token); ;
 
             lista.Where(p => p.fotopersona == "").ToList().ForEach(p => p.fotopersona = "/img/nofoto.jpg");
 
@@ -49,23 +51,23 @@ namespace Web.Cliente.Controllers
             //return lista;
             //
 
-            if(oUsuarioCLS.nombreusuario == null)
+            if (oUsuarioCLS.nombreusuario == null)
             {
                 oUsuarioCLS.nombreusuario = "";
             }
-           
-            List<UsuarioCLS> lista = await ClientHttp.PostList<UsuarioCLS>(_httpClientFactory, urlbase, "/api/Usuario", oUsuarioCLS); ;
+
+            List<UsuarioCLS> lista = await ClientHttp.PostList<UsuarioCLS>(_httpClientFactory, urlbase, "/api/Usuario", oUsuarioCLS, token); ;
 
             lista.Where(p => p.fotopersona == "").ToList().ForEach(p => p.fotopersona = "/img/nofoto.jpg");
 
-            return lista;   
-            
+            return lista;
+
         }
 
         //Metodo para insertar usuario
         public async Task<int> guardarUsuario(UsuarioCLS oUsuarioCLS)
         {
-            int res = await ClientHttp.Post<UsuarioCLS>(_httpClientFactory, urlbase, "/api/Usuario/guardarDatos", oUsuarioCLS);
+            int res = await ClientHttp.Post<UsuarioCLS>(_httpClientFactory, urlbase, "/api/Usuario/guardarDatos", oUsuarioCLS, token);
 
             return res;
         }
@@ -73,7 +75,13 @@ namespace Web.Cliente.Controllers
         //Metodo recuperar usuario
         public async Task<UsuarioCLS> recuperarUsuario(int id)
         {
-            return await ClientHttp.Get<UsuarioCLS>(_httpClientFactory, urlbase, $"/api/Usuario/"+id); 
+            return await ClientHttp.Get<UsuarioCLS>(_httpClientFactory, urlbase, $"/api/Usuario/" + id, token);
+        }
+
+        //Metodo para eliminar usuario
+        public async Task<int> eliminarUsuario(int id)
+        {
+            return await ClientHttp.Delete(_httpClientFactory, urlbase, $"/api/Usuario/"+ id, token);
         }
     }
 }

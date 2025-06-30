@@ -17,10 +17,21 @@ async function listar()
 			propiedadId: "iidusuario",
 			columnaimg: ["fotopersona"],
 
+			popup: true,
 			titlePopup: "Usuario boludo ",
 			editar: true,
+
+			//Eliminar
 			eliminar: true,
-			popup: true,
+			urleliminar: "Usuario/eliminarUsuario",
+			parametrorecuperar: "id",
+			callbackeliminar: async function ()
+			{
+				var dataPersonaSinUsuario = await fetchGet("Persona/listarPersonaSinUsuario", "json", null, true);
+				llenarCombo(dataPersonaSinUsuario, "cboPersonaFormulario", "iidpersona", "nombrecompleto", "--Seleccione--", "0");
+			},
+
+			
 
 			callbackrecuperar: function ()
 			{

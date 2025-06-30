@@ -4,6 +4,7 @@ using CapaEntidad;
 using Web.Api.Models;
 using System.Transactions;
 using Web.Api.Generic;
+using Web.Api.Filters;
 
 namespace Web.Api.Controllers
 {
@@ -13,6 +14,7 @@ namespace Web.Api.Controllers
     {
         // GET: api/Usuario/listarUsuario-----------------------------------------------------------------------
         [HttpGet]
+        [ServiceFilter(typeof(Seguridad))]
         public List<UsuarioCLS> listarUsuario()
         {
             List<UsuarioCLS> lista = new List<UsuarioCLS>();
@@ -44,6 +46,7 @@ namespace Web.Api.Controllers
 
         // GET NOMBRE api/Persona/listarPersona-----------------------------------------------------------------------
         [HttpPost]
+        [ServiceFilter(typeof(Seguridad))]
         public List<UsuarioCLS> buscarUsuarios([FromBody] UsuarioCLS oUsuarioCLS)
         {
             string nombreusuario = oUsuarioCLS.nombreusuario;
@@ -69,6 +72,7 @@ namespace Web.Api.Controllers
         //-> Cambiar Btieneusuario = 0 -> Btieneusuario = 1 (UPDATE persona)
 
         [HttpPost("guardarDatos")]
+        [ServiceFilter(typeof(Seguridad))]
         public int guardarDatos([FromBody] UsuarioCLS oUsuarioCLS)
         {
             int resultado = 0;
@@ -121,6 +125,7 @@ namespace Web.Api.Controllers
         }
 
         [HttpGet("{id}")]
+        [ServiceFilter(typeof(Seguridad))]
         public UsuarioCLS recuperarUsuario(int id)
         {
             UsuarioCLS oUsuarioCLS = new UsuarioCLS();
@@ -142,6 +147,41 @@ namespace Web.Api.Controllers
             catch (Exception ex)
             {
                 return oUsuarioCLS;
+            }
+        }
+
+        //Metodo para eliminar usuario
+        //1. -> Cambiar en la tabla usuario Bhabilitado de 1 a 0
+        //2. -> Cambiar en la tabla Persona Btieneusuario de 1 a 0
+        [HttpDelete("{id}")]
+        [ServiceFilter(typeof(Seguridad))]
+        public int eliminarUsuario(int id)
+        {
+            int respuesta = 0;
+            try
+            {
+                using (TransactionScope transaction = new TransactionScope())
+                {
+                    using (DbAbaf8dBdveterinariaContext bd = new DbAbaf8dBdveterinariaContext())
+                    {
+                        Usuario oUsuario = bd.Usuarios.Where(p => p.Iidusuario == id).First();
+                        oUsuario.Bhabilitado = 0; //Cambiar BHabilitado de 1 a 0
+                        bd.SaveChanges();
+
+                        Persona oPersona = bd.Personas.Where(p => p.Iidpersona == oUsuario.Iidpersona).First();
+                        oPersona.Btieneusuario = 0; //Cambiar BHabilitado de 1 a 0
+                        bd.SaveChanges();
+
+                        transaction.Complete();
+                        respuesta = 1;
+                        return respuesta;
+                    }
+                }
+                
+            }
+            catch (Exception ex)
+            {
+                return respuesta;
             }
         }
     }

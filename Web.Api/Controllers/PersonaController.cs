@@ -1,6 +1,7 @@
 ﻿using CapaEntidad;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Web.Api.Filters;
 using Web.Api.Models;
 
 
@@ -12,6 +13,7 @@ namespace Web.Api.Controllers
     {
         // GET: api/Persona/listarPersona-----------------------------------------------------------------------
         [HttpGet]
+        [ServiceFilter(typeof(Seguridad))]
         public List<PersonaCLS> listarPersona()
         {
             List<PersonaCLS> lista = new List<PersonaCLS>();
@@ -40,6 +42,7 @@ namespace Web.Api.Controllers
 
         // GET NOMBRE api/Persona/listarPersona-----------------------------------------------------------------------
         [HttpGet("{nombrecompleto}")]
+        [ServiceFilter(typeof(Seguridad))]
         public List<PersonaCLS> buscarPersona(string nombrecompleto)
         {
             List<PersonaCLS> lista = new List<PersonaCLS>();
@@ -70,6 +73,7 @@ namespace Web.Api.Controllers
 
         // GET recuperarPersona por ID api/Persona/recuperarPersona/{id}-----------------------------------------------------------------------
         [HttpGet("recuperarPersona/{id}")]
+        [ServiceFilter(typeof(Seguridad))]
         public PersonaCLS recuperarPersona(int id)
         {
             PersonaCLS oPersonaCLS = new PersonaCLS();
@@ -104,6 +108,7 @@ namespace Web.Api.Controllers
 
         // Delete api/Perssona/eliminarPersona-----------------------------------------------------------------------
         [HttpDelete("{id}")]
+        [ServiceFilter(typeof(Seguridad))]
         public int eliminarPersona(int id)
         {
             // 0 indica un error y 1 indica exito
@@ -128,6 +133,7 @@ namespace Web.Api.Controllers
 
         // Post api/Persona/guardarPersona-----------------------------------------------------------------------
         [HttpPost]
+        [ServiceFilter(typeof(Seguridad))]
         public int guardarPersona([FromBody] PersonaCLS oPersonaCLS)
         {
             int respuesta = 0;
@@ -189,6 +195,7 @@ namespace Web.Api.Controllers
 
         // GET: api/Persona/listarPersona-----------------------------------------------------------------------
         [HttpGet("listarPersonaSinUsuario")]
+        [ServiceFilter(typeof(Seguridad))]
         public List<PersonaCLS> listarPersonaSinUsuario()
         {
             List<PersonaCLS> lista = new List<PersonaCLS>();
