@@ -21,15 +21,30 @@ namespace Web.Cliente.Controllers
             token = configuration["token"];
         }
 
+
         public IActionResult Index()
         {
             return View();
         }
 
+        public IActionResult CerrarSesion()
+        {
+            HttpContext.Session.Remove("iidusuario");
+            return RedirectToAction("Index");
+        }
+
         //Metodo de login
         public async Task<int> login(string nombreusuario, string contra)
         {
-            return await ClientHttp.GetInt(_httpClientFactory, urlbase, "/api/Login/"+ nombreusuario + "/" + contra);
+            int logueo = await ClientHttp.GetInt(_httpClientFactory, urlbase, "/api/Login/" + nombreusuario + "/" + contra);
+
+            if(logueo != 0)
+            {
+                //Aqui es donde se inicia la sesion
+                HttpContext.Session.SetInt32("iidusuario", logueo);
+            }
+
+            return logueo;
         }
     }
 }

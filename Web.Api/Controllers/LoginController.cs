@@ -22,7 +22,8 @@ namespace Web.Api.Controllers
                 using (DbAbaf8dBdveterinariaContext bd = new DbAbaf8dBdveterinariaContext())
                 { 
                     string contracifrada = Utils.cifrarCadena(contra);
-                    int cantidad = bd.Usuarios.Where(p => p.Nombreusuario == nombreusuario && p.Contra == contracifrada).Count();
+                    var lista = bd.Usuarios.Where(p => p.Nombreusuario == nombreusuario && p.Contra == contracifrada);
+                    int cantidad = lista.Count();
 
                     if (cantidad == 0)
                     {
@@ -30,7 +31,7 @@ namespace Web.Api.Controllers
                     }
                     else
                     {
-                        return respuesta = 1;
+                        return lista.First().Iidusuario;
                     }
                 }              
             }

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
 using Web.Cliente.Clases;
+using Web.Cliente.Filters;
 
 namespace Web.Cliente.Controllers
 {
@@ -21,7 +22,7 @@ namespace Web.Cliente.Controllers
         }
 
 
-
+        [ServiceFilter(typeof(Seguridad))]
         public IActionResult Index()
         {
             return View();
@@ -30,6 +31,7 @@ namespace Web.Cliente.Controllers
 
         //Traer los datos o Data como string
         //Metodo para listar personas sin filtro
+        [ServiceFilter(typeof(Seguridad))]
         public async Task<List<PersonaCLS>> listarPersonas()
         {
             //var cliente = _httpClientFactory.CreateClient();
@@ -47,6 +49,7 @@ namespace Web.Cliente.Controllers
         }
 
         //Metodo para listar personas con filtro
+        [ServiceFilter(typeof(Seguridad))]
         public async Task<List<PersonaCLS>> filtrarPersonas(string nombrecompleto)
         {
             //var cliente = _httpClientFactory.CreateClient();
@@ -70,6 +73,7 @@ namespace Web.Cliente.Controllers
         }
 
         //Metodo para recuperar una persona por su id
+        [ServiceFilter(typeof(Seguridad))]
         public async Task<PersonaCLS> recuperarPersona(int id)
         {
             //var cliente = _httpClientFactory.CreateClient();
@@ -81,6 +85,7 @@ namespace Web.Cliente.Controllers
         }
 
         //Metodo para eliminar una persona por su id
+        [ServiceFilter(typeof(Seguridad))]
         public async Task<int> eliminarPersona(int id)
         {
             //var cliente = _httpClientFactory.CreateClient();
@@ -96,6 +101,7 @@ namespace Web.Cliente.Controllers
         }
 
         //Metodo para guardar una persona
+        [ServiceFilter(typeof(Seguridad))]
         public async Task<int> guardarPersona(PersonaCLS oPersonaCLS, IFormFile fotoenviar)
         {
             //var cliente = _httpClientFactory.CreateClient();
@@ -129,6 +135,7 @@ namespace Web.Cliente.Controllers
         }
 
         //Metodo para recuperar una persona sin usuario por su id
+        [ServiceFilter(typeof(Seguridad))]
         public async Task<List<PersonaCLS>> listarPersonaSinUsuario()
         {
             //var cliente = _httpClientFactory.CreateClient();

@@ -3,6 +3,7 @@ using CapaEntidad;
 using Web.Cliente.Clases;
 using System.Text.Json;
 using System.Collections.Generic;
+using Web.Cliente.Filters;
 
 namespace Web.Cliente.Controllers
 {
@@ -19,6 +20,7 @@ namespace Web.Cliente.Controllers
             token = configuration["token"];
         }
 
+        [ServiceFilter(typeof(Seguridad))]
         public IActionResult Index()
         {
             return View();
@@ -26,6 +28,7 @@ namespace Web.Cliente.Controllers
 
         //Traer los datos o Data como string
         //Metodo para listar personas sin filtro
+        [ServiceFilter(typeof(Seguridad))]
         public async Task<List<UsuarioCLS>> listarUsuarios()
         {
             //var cliente = _httpClientFactory.CreateClient();
@@ -35,13 +38,14 @@ namespace Web.Cliente.Controllers
             //return lista;
             //
 
-            List<UsuarioCLS> lista = await ClientHttp.GetAll<UsuarioCLS>(_httpClientFactory, urlbase, "/api/Usuario", token); ;
+            List<UsuarioCLS> lista = await ClientHttp.GetAll<UsuarioCLS>(_httpClientFactory, urlbase, "/api/Usuario", token); 
 
             lista.Where(p => p.fotopersona == "").ToList().ForEach(p => p.fotopersona = "/img/nofoto.jpg");
 
             return lista;
         }
 
+        [ServiceFilter(typeof(Seguridad))]
         public async Task<List<UsuarioCLS>> buscarUsuarios(UsuarioCLS oUsuarioCLS)
         {
             //var cliente = _httpClientFactory.CreateClient();
@@ -65,6 +69,7 @@ namespace Web.Cliente.Controllers
         }
 
         //Metodo para insertar usuario
+        [ServiceFilter(typeof(Seguridad))]
         public async Task<int> guardarUsuario(UsuarioCLS oUsuarioCLS)
         {
             int res = await ClientHttp.Post<UsuarioCLS>(_httpClientFactory, urlbase, "/api/Usuario/guardarDatos", oUsuarioCLS, token);
@@ -73,15 +78,18 @@ namespace Web.Cliente.Controllers
         }
 
         //Metodo recuperar usuario
+        [ServiceFilter(typeof(Seguridad))]
         public async Task<UsuarioCLS> recuperarUsuario(int id)
         {
             return await ClientHttp.Get<UsuarioCLS>(_httpClientFactory, urlbase, $"/api/Usuario/" + id, token);
         }
 
         //Metodo para eliminar usuario
+        [ServiceFilter(typeof(Seguridad))]
         public async Task<int> eliminarUsuario(int id)
         {
             return await ClientHttp.Delete(_httpClientFactory, urlbase, $"/api/Usuario/"+ id, token);
         }
     }
 }
+//holaaaaaa
